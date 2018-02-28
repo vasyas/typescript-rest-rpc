@@ -60,9 +60,7 @@ async function confirmSuccessResponse(response) {
 
     const text = await response.text() || response.statusText
 
-    const error = response.status == 400 ? new Error(text) : new Error(`Error ${response.status} ` + text)
-
-    error["code"] = response.status
+    throw new ServerError(response.status, text)
 
     // if (response.status != 400) {
     //     serverErrorListener({
@@ -70,8 +68,16 @@ async function confirmSuccessResponse(response) {
     //         message: text
     //     })
     // }
+}
 
-    throw error
+export class ServerError extends Error {
+    code: number
+
+    constructor(code, message) {
+        super(message)
+
+        this.code = code
+    }
 }
 
 export const ISO8601 = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/

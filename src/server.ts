@@ -34,12 +34,8 @@ async function invokeImpl(impl: object, operationName: string, operationDescript
         ? {}
         : ctx.request['body']
 
-    try {
-        const response = await impl[operationName](arg)
-        ctx.body = response
-    } catch (e) {
-        console.log(e)
-    }
+    const response = await impl[operationName](arg)
+    ctx.body = response
 }
 
 export class HttpError extends Error {
