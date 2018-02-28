@@ -13,6 +13,7 @@
     "@types/node": "^9.4.6",
     "isomorphic-fetch": "^2.2.1",
     "koa": "^2.5.0",
+    "koa-body": "^2.5.0",
     "ts-node": "^5.0.0",
     "typescript": "^2.7.2"
   }

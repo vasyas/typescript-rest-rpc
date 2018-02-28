@@ -12,17 +12,15 @@ export function createClient(targetUrl: string): any {
 }
 
 function restCall(targetUrl: string, operationName: string) {
-    return function(args): Promise<any> {
+    return function(...args): Promise<any> {
         if (args.length > 1) {
             throw new Error(`Operation '${ operationName }', expecting 0 or 1 arguments, got ${ args.length }`)
         }
 
-        console.log(`Invoking '${ operationName }' on ${ targetUrl }`)
-
         const parsedOperation = new OperationDescription(operationName, args)
 
         return new Promise((resolve, reject) => {
-            fetch(targetUrl + "/" + parsedOperation.getUrl(), {
+            fetch(targetUrl + parsedOperation.getUrl(), {
                 method: parsedOperation.getMethod(),
                 body: parsedOperation.getBody(),
                 headers: parsedOperation.getHeaders(),

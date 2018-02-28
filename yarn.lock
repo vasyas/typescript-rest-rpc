@@ -115,6 +115,10 @@ arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
 
+bytes@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.0.0.tgz#d32815404d689699f85a4ea4fa8755dd13a96048"
+
 chalk@^2.3.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.3.1.tgz#523fe2678aec7b04e8041909292fe8b17059b796"
@@ -122,6 +126,15 @@ chalk@^2.3.0:
     ansi-styles "^3.2.0"
     escape-string-regexp "^1.0.5"
     supports-color "^5.2.0"
+
+co-body@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/co-body/-/co-body-5.1.1.tgz#d97781d1e3344ba4a820fd1806bddf8341505236"
+  dependencies:
+    inflation "^2.0.0"
+    qs "^6.4.0"
+    raw-body "^2.2.0"
+    type-is "^1.6.14"
 
 co@^4.6.0:
   version "4.6.0"
@@ -204,6 +217,10 @@ escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
+formidable@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/formidable/-/formidable-1.1.1.tgz#96b8886f7c3c3508b932d6bd70c4d3a88f35f1a9"
+
 fresh@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -219,7 +236,7 @@ http-assert@^1.1.0:
     deep-equal "~1.0.1"
     http-errors "~1.6.1"
 
-http-errors@^1.2.8, http-errors@^1.3.1, http-errors@~1.6.1:
+http-errors@1.6.2, http-errors@^1.2.8, http-errors@^1.3.1, http-errors@~1.6.1:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.6.2.tgz#0a002cc85707192a7e7946ceedc11155f60ec736"
   dependencies:
@@ -228,9 +245,13 @@ http-errors@^1.2.8, http-errors@^1.3.1, http-errors@~1.6.1:
     setprototypeof "1.0.3"
     statuses ">= 1.3.1 < 2"
 
-iconv-lite@~0.4.13:
+iconv-lite@0.4.19, iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
+
+inflation@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/inflation/-/inflation-2.0.0.tgz#8b417e47c28f925a45133d914ca1fd389107f30f"
 
 inherits@2.0.3:
   version "2.0.3"
@@ -258,6 +279,13 @@ isomorphic-fetch@^2.2.1:
 keygrip@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/keygrip/-/keygrip-1.0.2.tgz#ad3297c557069dea8bcfe7a4fa491b75c5ddeb91"
+
+koa-body@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/koa-body/-/koa-body-2.5.0.tgz#84e8fcd8d5229a8cc1cb98a926e939069e716915"
+  dependencies:
+    co-body "^5.1.1"
+    formidable "^1.1.1"
 
 koa-compose@^3.0.0:
   version "3.2.1"
@@ -391,6 +419,19 @@ path-to-regexp@^1.1.1:
   dependencies:
     isarray "0.0.1"
 
+qs@^6.4.0:
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
+
+raw-body@^2.2.0:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.3.2.tgz#bcd60c77d3eb93cde0050295c3f379389bc88f89"
+  dependencies:
+    bytes "3.0.0"
+    http-errors "1.6.2"
+    iconv-lite "0.4.19"
+    unpipe "1.0.0"
+
 setprototypeof@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.0.3.tgz#66567e37043eeb4f04d91bd658c0cbefb55b8e04"
@@ -428,7 +469,7 @@ ts-node@^5.0.0:
     source-map-support "^0.5.3"
     yn "^2.0.0"
 
-type-is@^1.5.5:
+type-is@^1.5.5, type-is@^1.6.14:
   version "1.6.16"
   resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.16.tgz#f89ce341541c672b25ee7ae3c73dee3b2be50194"
   dependencies:
@@ -438,6 +479,10 @@ type-is@^1.5.5:
 typescript@^2.7.2:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.2.tgz#2d615a1ef4aee4f574425cdff7026edf81919836"
+
+unpipe@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
 
 urijs@^1.19.0:
   version "1.19.1"

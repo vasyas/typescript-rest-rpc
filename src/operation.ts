@@ -9,7 +9,7 @@ export class OperationDescription {
     }
 
     getUrl() {
-        return camelCaseToDash(this.stripOperationPrefix()) + this.getQueryString()
+        return "/" + camelCaseToDash(this.stripOperationPrefix()) + this.getQueryString()
     }
 
     getBody() {
@@ -40,10 +40,10 @@ export class OperationDescription {
 
         // of all objects, do not convert FormData
         if (typeof FormData == "undefined" || !(arg instanceof FormData)) {
-            return false
+            return true
         }
 
-        return true
+        return false
     }
 
     private getQueryString() {
