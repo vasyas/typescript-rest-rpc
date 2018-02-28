@@ -24,7 +24,7 @@ export class OperationDescription {
 
     getHeaders() {
         if (this.convertToJson()) {
-            return {"Content-Type": "application/json"}
+            return { "Content-Type": "application/json" }
         }
 
         return {}
