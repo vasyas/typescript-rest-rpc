@@ -4,8 +4,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "koa-router": "^7.4.0"
+  },
   "devDependencies": {
+    "@types/koa": "^2.0.44",
+    "@types/koa-router": "^7.0.27",
     "@types/node": "^9.4.6",
     "isomorphic-fetch": "^2.2.1",
     "koa": "^2.5.0",
