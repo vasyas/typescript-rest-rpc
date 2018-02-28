@@ -1,17 +1,23 @@
 import { OperationDescription } from "./operation"
 
-export function createClient(targetUrl: string): any {
+export function createClient(targetUrl: string, options: ClientOptions = {}): any {
     if (targetUrl.endsWith("/"))
         targetUrl = targetUrl.substring(0, targetUrl.length - 1)
 
     return new Proxy({}, {
-        get (target, key: string) {
-            return restCall(targetUrl, key)
+        get (target, operationName: string) {
+            return restCall(targetUrl, operationName, options)
         }
     })
 }
 
-function restCall(targetUrl: string, operationName: string) {
+export interface ClientOptions {
+    supplyHeaders?(): object
+    onServerError?(error: ServerError): void
+    onResponse?(response: Response): void
+}
+
+function restCall(targetUrl: string, operationName: string, options: ClientOptions) {
     return function(...args): Promise<any> {
         if (args.length > 1) {
             throw new Error(`Operation '${ operationName }', expecting 0 or 1 arguments, got ${ args.length }`)
@@ -19,16 +25,25 @@ function restCall(targetUrl: string, operationName: string) {
 
         const parsedOperation = new OperationDescription(operationName, args)
 
+        const headers = options.supplyHeaders ? options.supplyHeaders() : {}
+
         return new Promise((resolve, reject) => {
             fetch(targetUrl + parsedOperation.getUrl(), {
                 method: parsedOperation.getMethod(),
                 body: parsedOperation.getBody(),
-                headers: parsedOperation.getHeaders(),
+                headers: {
+                    ...headers,
+                    ...parsedOperation.getHeaders()
+                },
                 cache: "no-cache",
                 credentials: "same-origin"
             })
-                .then(confirmSuccessResponse)
+                .then(response => confirmSuccessResponse(response, options))
                 .then(response => parseResponse(response))
+                .then(response => {
+                    options.onResponse && options.onResponse(response)
+                    return response;
+                })
                 .then(response => resolve(response))
                 .catch(error => reject(error))
         })
@@ -49,25 +64,17 @@ async function parseResponse(response) {
     return JSON.parse(text, dateReviver)
 }
 
-async function confirmSuccessResponse(response) {
+async function confirmSuccessResponse(response, options: ClientOptions) {
     if (response.status >= 200 && response.status < 300) {
         return response
     }
 
-    // if (response.status == 401) {
-    //     unauthorizedHandler()
-    // }
-
     const text = await response.text() || response.statusText
 
-    throw new ServerError(response.status, text)
+    const serverError = new ServerError(response.status, text)
+    options.onServerError && options.onServerError(serverError)
 
-    // if (response.status != 400) {
-    //     serverErrorListener({
-    //         when: new Date(),
-    //         message: text
-    //     })
-    // }
+    throw serverError
 }
 
 export class ServerError extends Error {
