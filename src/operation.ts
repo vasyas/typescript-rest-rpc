@@ -1,5 +1,5 @@
 export class OperationDescription {
-    constructor(private operationName, private args = []) {
+    constructor(private operationName: string, private args = []) {
     }
 
     getMethod(): "GET" | "POST" {
@@ -72,8 +72,7 @@ export class OperationDescription {
         for (const prefix of strippedPrefixes) {
             if (this.operationName.startsWith(prefix) && this.operationName.length > prefix.length) {
                 const stripped = this.operationName.substring(prefix.length)
-                stripped[0] = stripped[0].toLowerCase()
-                return stripped
+                return stripped[0].toLowerCase() + stripped.substring(1)
             }
         }
 

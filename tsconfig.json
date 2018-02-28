@@ -1,14 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "allowSyntheticDefaultImports": true,
+    "target": "es5",
+    "outDir": "dist",
+    "declaration": true,
     "noImplicitAny": false,
-    "sourceMap": true,
-    "outDir": "build/js",
-    "removeComments": false,
     "lib": [
       "es2017",
       "dom"
