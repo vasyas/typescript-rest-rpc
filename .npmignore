@@ -2,3 +2,6 @@ example
 src
 tsconfig.json
 tslint.json
+.idea
+*.iml
+node_modules
