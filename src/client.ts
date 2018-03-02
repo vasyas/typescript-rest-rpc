@@ -1,4 +1,5 @@
 import { OperationDescription } from "./operation"
+import { Multipart } from "./multipart"
 
 export function createClient(targetUrl: string, options: ClientOptions = {}): any {
     if (targetUrl.endsWith("/"))
@@ -17,13 +18,90 @@ export interface ClientOptions {
     onResponse?(response: Response): void
 }
 
+class ClientOperationDescription extends OperationDescription {
+    constructor(operationName: string, private args) {
+        super(operationName)
+    }
+
+    getUrl() {
+        return super.getUrl() + this.getQueryString()
+    }
+
+    getBody() {
+        if (this.getMethod() == "GET") return null
+
+        const arg = this.args[0]
+
+        if (this.convertToJson()) {
+            return JSON.stringify(arg)
+        }
+
+        if (arg instanceof Multipart) {
+            const multipart = arg as Multipart
+            const formData = new FormData()
+
+            Object.keys(multipart.fields).forEach(name => {
+                formData.append(name, multipart.fields[name])
+            })
+
+            Object.keys(multipart.files).forEach(name => {
+                formData.append(name, multipart.files[name])
+            })
+
+            return formData
+        }
+
+        return arg
+    }
+
+    getHeaders() {
+        if (this.convertToJson()) {
+            return { "Content-Type": "application/json" }
+        }
+
+        return {}
+    }
+
+    private convertToJson(): boolean {
+        if (!this.args.length) return false
+
+        const arg = this.args[0]
+
+        if (typeof arg == "number") return true
+        if (typeof arg != "object") return false
+
+        if (arg instanceof Multipart) return false
+
+        return true
+    }
+
+    private getQueryString() {
+        if (this.getMethod() != "GET") return ""
+
+        if (!this.args.length) return ""
+
+        let r = ""
+
+        Object.keys(this.args).forEach(key => {
+            if (this.args[key] == null) return
+
+            if (r != "") r += "&"
+
+            r += `${ key }=${ encodeURIComponent(formatParam(this.args[key])) }`
+        })
+
+        return `?${r}`
+    }
+
+}
+
 function restCall(targetUrl: string, operationName: string, options: ClientOptions) {
     return function(...args): Promise<any> {
         if (args.length > 1) {
             throw new Error(`Operation '${ operationName }', expecting 0 or 1 arguments, got ${ args.length }`)
         }
 
-        const parsedOperation = new OperationDescription(operationName, args)
+        const parsedOperation = new ClientOperationDescription(operationName, args)
 
         const headers = options.supplyHeaders ? options.supplyHeaders() : {}
 
@@ -103,4 +181,23 @@ export function dateReviver(key, val) {
     }
 
     return val
+}
+
+function formatParam(param) {
+    function pad2(n) {
+        if (n < 10) return "0" + n
+
+        return "" + n
+    }
+
+    // 2007-12-03 is backend accepted format
+    if (param instanceof Date) {
+        return `${ param.getFullYear() }-${ pad2(1 + param.getMonth()) }-${ pad2(param.getDate()) }`
+    }
+
+    // if (moment.isMoment(param)) {
+    //     return `${param.year()}-${pad2(1 + param.month())}-${pad2(param.date())}`
+    // }
+
+    return "" + param
 }

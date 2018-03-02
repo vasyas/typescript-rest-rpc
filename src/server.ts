@@ -1,6 +1,8 @@
 import * as Router from "koa-router"
 import { Context } from "koa"
+
 import { OperationDescription } from "./operation"
+import { Multipart } from "./multipart"
 
 export function createServerRouter(prefix: string, impl: object): Router {
     if (!prefix.startsWith("/")) prefix = "/" + prefix
@@ -30,9 +32,13 @@ function getMethodNames(o: object): Set<string> {
 }
 
 async function invokeImpl(impl: object, operationName: string, operationDescription: OperationDescription, ctx: Context) {
-    const arg = operationDescription.getMethod() == "GET"
+    let arg = operationDescription.getMethod() == "GET"
         ? {}
-        : ctx.request['body']
+        : ctx.request["body"]
+
+    if (ctx.request.is("multipart")) {
+        arg = new Multipart(arg.files, arg.fields)
+    }
 
     const response = await impl[operationName](arg)
     ctx.body = response
