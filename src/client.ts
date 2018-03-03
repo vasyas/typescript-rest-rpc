@@ -117,11 +117,11 @@ function restCall(targetUrl: string, operationName: string, options: ClientOptio
                 credentials: "same-origin"
             })
                 .then(response => confirmSuccessResponse(response, options))
-                .then(response => parseResponse(response))
                 .then(response => {
                     options.onResponse && options.onResponse(response)
                     return response;
                 })
+                .then(response => parseResponse(response))
                 .then(response => resolve(response))
                 .catch(error => reject(error))
         })
