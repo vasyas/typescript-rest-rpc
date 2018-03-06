@@ -1,15 +1,22 @@
 import { OperationDescription } from "./operation"
 import { Multipart } from "./multipart"
 
-export function createClient(targetUrl: string, options: ClientOptions = {}): any {
+export function createClient(targetUrl: string, options: ClientOptions = {}, operationNames?): any {
     if (targetUrl.endsWith("/"))
         targetUrl = targetUrl.substring(0, targetUrl.length - 1)
 
-    return new Proxy({}, {
-        get (target, operationName: string) {
-            return restCall(targetUrl, operationName, options)
-        }
-    })
+    if (operationNames) {
+        return operationNames.reduce((r, operationName) => {
+            r[operationName] = restCall(targetUrl, operationName, options)
+            return r
+        }, {})
+    } else {
+        return new Proxy({}, {
+            get(target, operationName: string) {
+                return restCall(targetUrl, operationName, options)
+            }
+        })
+    }
 }
 
 export interface ClientOptions {
