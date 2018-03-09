@@ -176,12 +176,12 @@ export const ISO8601 = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/
 
 export function dateReviver(key, val) {
     if (typeof val == "string") {
-        // DateTime
+        // match Java's DateTime
         if (ISO8601.test(val)) {
             return new Date(val)
         }
 
-        // Date
+        // match Java's Date
         if (/^\d\d\d\d-\d\d-\d\d$/.test(val)) {
             return new Date(val)
         }
@@ -201,10 +201,6 @@ function formatParam(param) {
     if (param instanceof Date) {
         return `${ param.getFullYear() }-${ pad2(1 + param.getMonth()) }-${ pad2(param.getDate()) }`
     }
-
-    // if (moment.isMoment(param)) {
-    //     return `${param.year()}-${pad2(1 + param.month())}-${pad2(param.date())}`
-    // }
 
     return "" + param
 }

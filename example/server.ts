@@ -2,7 +2,7 @@ import * as Koa from "koa"
 import * as koaBody from "koa-body"
 
 import { Backend } from "./shared"
-import { BadRequest, createServerRouter, HttpError } from "../src"
+import { BadRequest, createServerRouter, HttpError } from "../src/server"
 
 class BackendImpl implements Backend {
     async login({ username, password }): Promise<{ token: string }> {

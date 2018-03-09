@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 
-import { createClient } from "../src"
+import { createClient } from "../src/client"
 import { Backend } from "./shared"
 
 (async function() {

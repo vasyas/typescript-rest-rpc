@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es5",
-    "outDir": "dist",
+    "outDir": "lib",
     "declaration": true,
     "noImplicitAny": false,
     "lib": [
@@ -10,8 +10,8 @@
       "dom"
     ]
   },
-  "files": [
-    "src/index.ts"
+  "include": [
+    "src/*.ts"
   ],
   "exclude": [
     "node_modules"
