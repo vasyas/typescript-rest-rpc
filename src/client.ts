@@ -138,15 +138,20 @@ function restCall(targetUrl: string, operationName: string, options: ClientOptio
 async function parseResponse(response) {
     if (!response) return
 
-    const text = await response.text()
-
     const contentType = response.headers && response.headers.get("content-type")
+    if (!contentType) return response
 
-    if (!contentType || contentType.indexOf("application/json") == -1) {
-        return text
+    if (!(contentType.indexOf("text") == 0 || contentType.indexOf("application/json") == 0)) {
+        return response
     }
 
-    return JSON.parse(text, dateReviver)
+    const text = await response.text()
+
+    if (contentType.indexOf("application/json") == 0) {
+        return JSON.parse(text, dateReviver)
+    }
+
+    return text
 }
 
 async function confirmSuccessResponse(response, options: ClientOptions) {
@@ -203,4 +208,17 @@ function formatParam(param) {
     }
 
     return "" + param
+}
+
+export async function download(response, fileName) {
+    const blobby = await response.blob()
+
+    const objectUrl = window.URL.createObjectURL(blobby)
+
+    const anchor = document.createElement("a")
+    anchor.href = objectUrl
+    anchor.download = fileName
+    anchor.click()
+
+    window.URL.revokeObjectURL(objectUrl)
 }

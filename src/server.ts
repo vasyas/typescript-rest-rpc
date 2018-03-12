@@ -40,7 +40,7 @@ async function invokeImpl(impl: object, operationName: string, operationDescript
         arg = new Multipart(arg.files, arg.fields)
     }
 
-    const response = await impl[operationName](arg)
+    const response = await impl[operationName](arg, ctx)
     ctx.body = response
 }
 
