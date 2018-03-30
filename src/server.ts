@@ -43,25 +43,3 @@ async function invokeImpl(impl: object, operationName: string, operationDescript
     const response = await impl[operationName](arg, ctx)
     ctx.body = response
 }
-
-export class HttpError extends Error {
-    code: number
-
-    constructor(code, message = null) {
-        super(message)
-
-        this.code = code
-    }
-}
-
-export class NotFound extends HttpError {
-    constructor() {
-        super(404)
-    }
-}
-
-export class BadRequest extends HttpError {
-    constructor(message = null) {
-        super(400, message)
-    }
-}
