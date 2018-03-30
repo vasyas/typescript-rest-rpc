@@ -25,7 +25,7 @@ export interface ClientOptions {
     onResponse?(response: Response): void
 }
 
-class ClientOperationDescription extends OperationDescription {
+export class ClientOperationDescription extends OperationDescription {
     constructor(operationName: string, private args) {
         super(operationName)
     }
@@ -89,12 +89,14 @@ class ClientOperationDescription extends OperationDescription {
 
         let r = ""
 
-        Object.keys(this.args).forEach(key => {
-            if (this.args[key] == null) return
+        const arg = this.args[0]
+
+        Object.keys(arg).forEach(key => {
+            if (arg[key] == null) return
 
             if (r != "") r += "&"
 
-            r += `${ key }=${ encodeURIComponent(formatParam(this.args[key])) }`
+            r += `${ key }=${ encodeURIComponent(formatParam(arg[key])) }`
         })
 
         return `?${r}`
