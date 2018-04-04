@@ -33,7 +33,7 @@ function getMethodNames(o: object): Set<string> {
 
 async function invokeImpl(impl: object, operationName: string, operationDescription: OperationDescription, ctx: Context) {
     let arg = operationDescription.getMethod() == "GET"
-        ? {}
+        ? ctx.query
         : ctx.request["body"]
 
     if (ctx.request.is("multipart")) {
