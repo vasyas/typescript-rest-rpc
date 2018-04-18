@@ -20,7 +20,7 @@ export declare class ClientOperationDescription extends OperationDescription {
 }
 export declare class ServerError extends Error {
     code: number;
-    constructor(code: any, message: any);
+    constructor(code: any, message?: any);
 }
 export declare const ISO8601: RegExp;
 export declare function dateReviver(key: any, val: any): any;

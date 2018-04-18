@@ -167,7 +167,7 @@ async function confirmSuccessResponse(response, options: ClientOptions) {
 
     const contentType = response.headers && response.headers.get("content-type")
     if (contentType && contentType.indexOf("application/json") == 0) {
-        serverError = new ServerError(response.status, null)
+        serverError = new ServerError(response.status)
 
         const parsed = JSON.parse(text, dateReviver)
         Object.assign(serverError, parsed)
@@ -183,7 +183,7 @@ async function confirmSuccessResponse(response, options: ClientOptions) {
 export class ServerError extends Error {
     code: number
 
-    constructor(code, message) {
+    constructor(code, message?) {
         super(message)
 
         this.code = code
