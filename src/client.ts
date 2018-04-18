@@ -163,12 +163,16 @@ async function confirmSuccessResponse(response, options: ClientOptions) {
 
     const text = await response.text() || response.statusText
 
-    const serverError = new ServerError(response.status, text)
+    let serverError;
 
     const contentType = response.headers && response.headers.get("content-type")
     if (contentType && contentType.indexOf("application/json") == 0) {
+        serverError = new ServerError(response.status, null)
+
         const parsed = JSON.parse(text, dateReviver)
         Object.assign(serverError, parsed)
+    } else {
+        serverError = new ServerError(response.status, text)
     }
 
     options.onServerError && options.onServerError(serverError)
