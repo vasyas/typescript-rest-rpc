@@ -217,8 +217,11 @@ function formatParam(param) {
     }
 
     // 2007-12-03 is backend accepted format
-    if (param instanceof Date || param instanceof moment) {
+    if (param instanceof Date) {
         return `${ param.getFullYear() }-${ pad2(1 + param.getMonth()) }-${ pad2(param.getDate()) }`
+    }
+    if (moment.isMoment(param)) {
+        return `${ param.year() }-${ pad2(1 + param.month()) }-${ pad2(param.date()) }`
     }
 
     return "" + param
