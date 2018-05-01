@@ -1,5 +1,6 @@
 import { OperationDescription } from "./operation"
 import { Multipart } from "./multipart"
+import * as moment from "moment"
 
 export function createClient(targetUrl: string, options: ClientOptions = {}, operationNames?): any {
     if (targetUrl.endsWith("/"))
@@ -216,7 +217,7 @@ function formatParam(param) {
     }
 
     // 2007-12-03 is backend accepted format
-    if (param instanceof Date) {
+    if (param instanceof Date || param instanceof moment) {
         return `${ param.getFullYear() }-${ pad2(1 + param.getMonth()) }-${ pad2(param.getDate()) }`
     }
 
