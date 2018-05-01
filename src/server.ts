@@ -4,7 +4,9 @@ import { Context } from "koa"
 import { OperationDescription } from "./operation"
 import { Multipart } from "./multipart"
 
-export function createServerRouter(prefix: string, impl: object): Router {
+export type CreateContext = (ctx: Context) => any
+
+export function createServerRouter(prefix: string, impl: object, createContext: CreateContext = ctx => ctx): Router {
     if (!prefix.startsWith("/")) prefix = "/" + prefix
     if (prefix.endsWith("/")) prefix = prefix.substring(0, prefix.length - 1)
 
@@ -16,7 +18,7 @@ export function createServerRouter(prefix: string, impl: object): Router {
         const verb = operationDescription.getMethod().toLowerCase()
 
         router[verb](operationDescription.getUrl(), (ctx: Context) => {
-            return invokeImpl(impl, operationName, operationDescription, ctx)
+            return invokeImpl(impl, operationName, operationDescription, ctx, createContext)
         })
     })
 
@@ -31,7 +33,7 @@ function getMethodNames(o: object): Set<string> {
     return userFunctions(o)
 }
 
-async function invokeImpl(impl: object, operationName: string, operationDescription: OperationDescription, ctx: Context) {
+async function invokeImpl(impl: object, operationName: string, operationDescription: OperationDescription, ctx: Context, createContext: CreateContext) {
     let arg = operationDescription.getMethod() == "GET"
         ? ctx.query
         : ctx.request["body"]
@@ -40,6 +42,6 @@ async function invokeImpl(impl: object, operationName: string, operationDescript
         arg = new Multipart(arg.files, arg.fields)
     }
 
-    const response = await impl[operationName](arg, ctx)
+    const response = await impl[operationName](arg, createContext(ctx))
     ctx.body = response
 }
