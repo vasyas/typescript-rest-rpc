@@ -6,11 +6,13 @@ import { Multipart } from "./multipart"
 
 export type CreateContext = (ctx: Context) => any
 
-export function createServerRouter(prefix: string, impl: object, createContext: CreateContext = ctx => ctx): Router {
+export function createServerRouter(prefix: string, impl: object, createContext: CreateContext = ctx => ctx, middlewares = []): Router {
     if (!prefix.startsWith("/")) prefix = "/" + prefix
     if (prefix.endsWith("/")) prefix = prefix.substring(0, prefix.length - 1)
 
     const router = new Router({ prefix })
+
+    middlewares.forEach(middleware => router.use(middleware))
 
     getMethodNames(impl).forEach(operationName => {
         const operationDescription = new OperationDescription(operationName)
