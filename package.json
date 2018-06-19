@@ -1,7 +1,7 @@
 {
   "name": "typescript-rest-rpc",
   "description": "Auto generate client and server stubs for RESTful services based on TS source",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "keywords": [],
   "author": "Vasyl Stashuk <vasyl@stashuk.com>",
   "license": "ISC",
