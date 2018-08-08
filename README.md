@@ -59,9 +59,6 @@ implementation to quick find how API is implemented!
 - JSON bodies auto-parsing with Date revival. 
 - Supported client envs: Node.JS (with `isomorphic-fetch`), browser, react-native(see notes).
  
-## To be done
-- parse query string for GET requests
-
 ## Implementation flaws
 - untyped File in Multipart definition
 - untyped File in binary download
