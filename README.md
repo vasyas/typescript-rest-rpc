@@ -73,7 +73,7 @@ on some devices, see [this RN Issue](https://github.com/facebook/react-native/is
 And no polyfills could exist that will handle dynamic properties. So for React Native you 
 should explicitly list your interface operations:
 ```
-export let backend: Backend = createClient(url, {
+export let backend: Backend = createClient(url, { ... }, 
     [ "login", "resetPassword", etc ]
 )
 ``` 
