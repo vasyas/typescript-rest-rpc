@@ -86,8 +86,6 @@ export class ClientOperationDescription extends OperationDescription {
     private getQueryString() {
         if (this.getMethod() != "GET") return ""
 
-        if (!this.args.length) return ""
-
         let r = ""
 
         const arg = this.args[0]
@@ -95,12 +93,16 @@ export class ClientOperationDescription extends OperationDescription {
         Object.keys(arg).forEach(key => {
             if (arg[key] == null) return
 
-            if (r != "") r += "&"
+            const values = Array.isArray(arg[key]) ? arg[key] : [ arg[key] ]
 
-            r += `${ key }=${ encodeURIComponent(formatParam(arg[key])) }`
+            for (let i = 0; i < values.length; i ++) {
+                if (r != "") r += "&"
+
+                r += `${ key }=${ encodeURIComponent(formatParam(values[i])) }`
+            }
         })
 
-        return `?${r}`
+        return r ? `?${r}` : ""
     }
 
 }
