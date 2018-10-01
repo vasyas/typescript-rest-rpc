@@ -23,5 +23,12 @@ describe('client operator test', () => {
             expect(operation.getBody()).is.null
             expect(operation.getUrl()).eql("/clients")
         })
+
+        it('handles no params', () => {
+            const operation = new ClientOperationDescription("getClients", [])
+            expect(operation.getMethod()).eql("GET")
+            expect(operation.getBody()).is.null
+            expect(operation.getUrl()).eql("/clients")
+        })
     });
 });

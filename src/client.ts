@@ -90,17 +90,19 @@ export class ClientOperationDescription extends OperationDescription {
 
         const arg = this.args[0]
 
-        Object.keys(arg).forEach(key => {
-            if (arg[key] == null) return
+        if (arg) {
+            Object.keys(arg).forEach(key => {
+                if (arg[key] == null) return
 
-            const values = Array.isArray(arg[key]) ? arg[key] : [ arg[key] ]
+                const values = Array.isArray(arg[key]) ? arg[key] : [arg[key]]
 
-            for (let i = 0; i < values.length; i ++) {
-                if (r != "") r += "&"
+                for (let i = 0; i < values.length; i++) {
+                    if (r != "") r += "&"
 
-                r += `${ key }=${ encodeURIComponent(formatParam(values[i])) }`
-            }
-        })
+                    r += `${ key }=${ encodeURIComponent(formatParam(values[i])) }`
+                }
+            })
+        }
 
         return r ? `?${r}` : ""
     }
