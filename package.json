@@ -1,7 +1,7 @@
 {
   "name": "typescript-rest-rpc",
   "description": "Auto generate client and server stubs for RESTful services based on TS source",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "keywords": [],
   "author": "Vasyl Stashuk <vasyl@stashuk.com>",
   "license": "ISC",
@@ -27,6 +27,6 @@
     "koa-router": "^7.4.0",
     "mocha": "^5.0.5",
     "ts-node": "^5.0.0",
-    "typescript": "^2.7.2"
+    "typescript": "^3.2.1"
   }
 }
