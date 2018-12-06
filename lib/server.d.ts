@@ -1,5 +1,3 @@
-/// <reference types="koa" />
-/// <reference types="koa-router" />
 import * as Router from "koa-router";
 import { Context } from "koa";
 export declare type CreateContext = (ctx: Context) => any;

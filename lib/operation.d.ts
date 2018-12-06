@@ -3,5 +3,5 @@ export declare class OperationDescription {
     constructor(operationName: string);
     getMethod(): "GET" | "POST";
     getUrl(): string;
-    private stripOperationPrefix();
+    private stripOperationPrefix;
 }

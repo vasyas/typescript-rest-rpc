@@ -13,10 +13,10 @@ export declare class ClientOperationDescription extends OperationDescription {
     getHeaders(): {
         "Content-Type": string;
     } | {
-        Content-Type?: undefined;
+        "Content-Type"?: undefined;
     };
-    private convertToJson();
-    private getQueryString();
+    private convertToJson;
+    private getQueryString;
 }
 export declare class ServerError extends Error {
     code: number;
