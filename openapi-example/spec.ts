@@ -8,5 +8,5 @@ export interface AuthService {
 }
 
 export interface ClientService {
-    getClient({ id }: { id: number }): Promise<{ void }>
+    getClient({ id }: { id: number }): Promise<void>
 }

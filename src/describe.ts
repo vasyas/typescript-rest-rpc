@@ -129,16 +129,34 @@ function requestParameters(method: MethodSignature) {
     }))
 }
 
+function operationResponses(method: MethodSignature) {
+    const returnType = method.getReturnType()
+
+    if (!returnType || returnType.isUndefined()) return undefined
+
+    // should be Promise<smth>, get smth
+    const promisedReturn = returnType.getTypeArguments()[0]
+
+    if (promisedReturn.getText() == "void") return undefined
+
+    return {
+        '200': {
+            description: "Success",
+            content: {
+                "application/json": {
+                    schema: schema(promisedReturn)
+                }
+            }
+        }
+    }
+}
 
 function describeOperation(method: MethodSignature, description: OperationDescription) {
-    return description.getMethod() == "GET" ?
-        {
-            parameters: requestParameters(method),
-        }
-        :
-        {
-            requestBody: requestBody(method)
-        }
+    const responses = operationResponses(method)
+
+    return description.getMethod() == "GET"
+        ? { responses, parameters: requestParameters(method)}
+        : { responses, requestBody: requestBody(method) }
 }
 
 (() => {
@@ -156,6 +174,9 @@ function describeOperation(method: MethodSignature, description: OperationDescri
         definitions,
     }
 
+    if (!Object.keys(result.definitions).length) delete result.definitions
+    if (!Object.keys(result.paths)) delete result.paths
+
     function filterUndefined(obj) {
         for (const key of Object.keys(obj)) {
             if (obj[key] == undefined)
@@ -168,8 +189,6 @@ function describeOperation(method: MethodSignature, description: OperationDescri
 
         return obj
     }
-
-    console.log(filterUndefined(result).paths)
 
     yaml.sync(outputFile, filterUndefined(result))
 })()
