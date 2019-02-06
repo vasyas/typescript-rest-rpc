@@ -2,14 +2,20 @@ import * as Koa from "koa"
 import * as koaBody from "koa-body"
 
 import { Backend } from "./shared"
-import { BadRequest, createServerRouter, HttpError } from "../src/server"
+import { createServerRouter } from "../src/server"
+
+class HttpError extends Error {
+    constructor(public code: number, message: string) {
+        super(message)
+    }
+}
 
 class BackendImpl implements Backend {
     async login({ username, password }): Promise<{ token: string }> {
         if (username == "admin" && password == "123456")
             return { token: "ok" }
 
-        throw new BadRequest("Invalid login or password")
+        throw new HttpError(400, "Invalid login or password")
     }
 }
 

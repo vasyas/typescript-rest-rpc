@@ -1,0 +1,20 @@
+{
+  "entry": {
+    "file": "./openapi-example/spec.ts",
+    "interface": "Backend"
+  },
+  "header": {
+    "openapi": "2.0",
+    "info": {
+      "title": "Typescript-Rest-Rpc example",
+      "description": "Example on how to generate API description in Swagger format",
+      "version": "1.0"
+    },
+    "servers": [
+      {
+        "url": "https://demo.myhost.com/api",
+        "description": "Demo Server"
+      }
+    ]
+  }
+}

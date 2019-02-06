@@ -13,7 +13,9 @@
     "test": "mocha -r ts-node/register ./test/**/*.ts"
   },
   "dependencies": {
-    "moment": "^2.22.1"
+    "moment": "^2.22.1",
+    "ts-morph": "^1.0.0",
+    "write-yaml": "^1.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",

@@ -58,11 +58,13 @@ implementation to quick find how API is implemented!
 - Binary data download.
 - JSON bodies auto-parsing with Date revival. 
 - Supported client envs: Node.JS (with `isomorphic-fetch`), browser, react-native(see notes).
+- Generation of OpenAPI (Swagger) YAMLs with API description
  
 ## Implementation flaws
 - untyped File in Multipart definition
 - untyped File in binary download
 - ctx parameter is untyped and should be defined in the base interface
+
 
 ## Notes on the implementation
 
