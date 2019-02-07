@@ -196,8 +196,10 @@ export class ApiDescriber {
         let modulePath = absolutePathMatch[1]
         modulePath = modulePath.replace(/node_modules/g, "lib")
 
-        const referencePath = path.relative(this.baseDir, modulePath).replace("/", ".")
-        return `${referencePath}.${name}`
+        const referencePath = path.relative(this.baseDir, modulePath).replace(/\//g, ".")
+        const referenceName =`${referencePath}.${name}`
+
+        return referenceName
     }
 
     private typeDefinitions = []
