@@ -13,6 +13,11 @@ export interface Client {
     lastModified: Date
 }
 
+export interface Page<T> {
+    total: number
+    rows: Client[]
+}
+
 export interface AuthService {
     login({ username, password }): Promise<{ token: string }>
     sendResetPassword({ username }): Promise<void>
@@ -21,4 +26,5 @@ export interface AuthService {
 export interface ClientService {
     getClient({ id }: { id: number }): Promise<Client>
     getAllClients(): Promise<Client[]>
+    getClients(): Promise<Page<Client>>
 }

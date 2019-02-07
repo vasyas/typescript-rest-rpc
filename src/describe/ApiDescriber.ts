@@ -185,13 +185,24 @@ export class ApiDescriber {
         }
     }
 
-    private getTypeReferenceName(type: Type): string {
-        const text = type.getText()
+    private getTypeReferenceName(type: Type, skipArguments?): string {
+        // Generic
+        if (!skipArguments && type.getTypeArguments().length > 0) {
+            const targetName = this.getTypeReferenceName(type.getApparentType(), true)
+
+            const argNames = type.getTypeArguments().map(type => this.getTypeReferenceName(type)).join("And")
+            return `${ targetName }Of_${ argNames }`
+        }
+
+        let text = type.getText()
+
+        if (text.indexOf("<") >= 0)
+            text = text.substring(0, text.indexOf("<"))
 
         const idx = text.lastIndexOf(".")
 
         const name = text.substring(idx + 1)
-        const absolutePathMatch = text.match(/"(.*?)"/)
+        const absolutePathMatch = text.match(/"(.+?)"/)
 
         if (!absolutePathMatch) {
             return name
