@@ -26,15 +26,15 @@ const descriptionFile = "./openapi-example/api-description.json"
 const outputFile = "./api.yaml"
 const baseDir = ".";
 
-// const tsConfigFilePath = "./tsconfig.json"
-// const descriptionFile = "./api-description.json"
-// const outputFile = "./api.yaml"
+// const tsConfigFilePath = "tsconfig.json"
+// const descriptionFile = "api-description.json"
+// const outputFile = "api.yaml"
 // const baseDir = "/Users/vasyas/projects/elpaso/shared";
 
 (() => {
-    const description = JSON.parse(fs.readFileSync(path.relative(baseDir, descriptionFile), "utf8"))
+    const description = JSON.parse(fs.readFileSync(path.join(baseDir, descriptionFile), "utf8"))
 
-    const project = loadProject(path.relative(baseDir, tsConfigFilePath))
+    const project = loadProject(path.join(baseDir, tsConfigFilePath))
     const entryFile = project.getSourceFile(description.entry.file)
     const entryInterface = entryFile.getInterface(description.entry.interface)
 

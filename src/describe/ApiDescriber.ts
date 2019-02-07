@@ -160,6 +160,8 @@ export class ApiDescriber {
     }
 
     private getTypeReferenceName(type: Type): string {
+        console.log("Finding reference for " + type.getText())
+
         const text = type.getText()
         const idx = text.lastIndexOf(".")
 
