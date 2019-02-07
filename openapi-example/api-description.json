@@ -3,7 +3,7 @@
     "file": "./openapi-example/spec.ts",
     "interface": "Backend"
   },
-  "header": {
+  "template": {
     "openapi": "3.0.0",
     "info": {
       "title": "Typescript-Rest-Rpc example",

@@ -44,9 +44,12 @@ const optionDefinitions = [
     const paths = apiDescriber.describeInterface(entryInterface)
 
     const result = {
-        ...description.header,
+        ...description.template,
         paths,
-        ...apiDescriber.createDefinitions(),
+        components: {
+            ...description.template.components,
+            schemas: apiDescriber.createDefinitionSchemas(),
+        }
     }
 
     function filterUndefined(obj) {

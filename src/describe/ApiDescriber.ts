@@ -42,8 +42,8 @@ export class ApiDescriber {
         return paths
     }
 
-    createDefinitions() {
-        if (!this.typeDefinitions.length) return {}
+    createDefinitionSchemas() {
+        if (!this.typeDefinitions.length) return undefined
 
         const schemas = {}
 
@@ -53,11 +53,7 @@ export class ApiDescriber {
             this.typeDefinitions.splice(0, 1)
         }
 
-        return {
-            components: {
-                schemas
-            }
-        }
+        return schemas
     }
 
 
