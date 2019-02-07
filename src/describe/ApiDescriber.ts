@@ -1,5 +1,5 @@
 import * as path from "path"
-import { InterfaceDeclaration, MethodSignature, ObjectFlags, PropertySignature, Type } from "ts-morph"
+import { InterfaceDeclaration, MethodSignature, ObjectFlags, PropertySignature, Type, EnumDeclaration } from "ts-morph"
 import { OperationDescription } from "../operation"
 
 export class ApiDescriber {
@@ -49,7 +49,14 @@ export class ApiDescriber {
 
         while (this.typeDefinitions.length) {
             const type = this.typeDefinitions[0]
-            schemas[this.getTypeReferenceName(type)] = this.objectSchema(type)
+
+            if (type.isObject())
+                schemas[this.getTypeReferenceName(type)] = this.objectSchema(type)
+            else if (type.isEnum() || type.isEnumLiteral())
+                schemas[this.getTypeReferenceName(type)] = this.enumSchema(type)
+            else
+                console.log("Unsupported definition type " + type.getText())
+
             this.typeDefinitions.splice(0, 1)
         }
 
@@ -132,9 +139,10 @@ export class ApiDescriber {
         if (type.isString()) return { type: "string" }
         if (type.isNumber()) return { type: "number" }
         if (type.isBoolean()) return { type: "boolean" }
+
         if (type.getText() == "any") return {}
 
-        if (type.isObject()) {
+        if (type.isObject() || type.isEnum() || type.isEnumLiteral()) {
             // generate reference or in-place schema?
             if ((type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
                 this.typeDefinitions.push(type)
@@ -143,7 +151,11 @@ export class ApiDescriber {
                     "$ref": `#/components/schemas/${ this.getTypeReferenceName(type) }`
                 }
             }
-            return this.objectSchema(type)
+
+            if (type.isObject())
+                return this.objectSchema(type)
+            if (type.isEnum() || type.isEnumLiteral())
+                return this.enumSchema(type)
         }
 
         console.warn(`Unsupported type ${ type.getText() }`)
@@ -182,6 +194,16 @@ export class ApiDescriber {
         return {
             type: "object",
             properties
+        }
+    }
+
+    private enumSchema(type: Type) {
+        const declaration = type.getSymbol().getValueDeclaration() as EnumDeclaration
+        const members = declaration.getMembers()
+
+        return {
+            type: "string",
+            enum: members.map(m => m.getValue())
         }
     }
 

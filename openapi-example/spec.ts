@@ -11,6 +11,12 @@ export interface Client {
     id: number
     name: string
     lastModified: Date
+    status: ClientStatus
+}
+
+export enum ClientStatus {
+    Active = "Active",
+    Blocked = "Blocked",
 }
 
 export interface Page<T> {
