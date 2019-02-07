@@ -114,19 +114,27 @@ export class ApiDescriber {
     private schema(type: Type) {
         if (!type) return {}
 
-        // generate reference or in-place schema?
-        if (type.isObject() && (type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
-            this.typeDefinitions.push(type)
-
+        if (type.isArray()) {
             return {
-                "$ref": `#/components/schemas/${ this.getTypeReferenceName(type) }`
+                type: "array",
+                items: this.schema(type.getArrayType())
             }
         }
 
-        if (type.isObject()) return this.objectSchema(type)
-
         if (type.isString()) return { type: "string" }
         if (type.isNumber()) return { type: "number" }
+
+        if (type.isObject()) {
+            // generate reference or in-place schema?
+            if ((type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
+                this.typeDefinitions.push(type)
+
+                return {
+                    "$ref": `#/components/schemas/${ this.getTypeReferenceName(type) }`
+                }
+            }
+            return this.objectSchema(type)
+        }
 
         console.warn(`Unsupported type ${ type.getText() }`)
         return undefined
