@@ -3,11 +3,15 @@ import { InterfaceDeclaration, MethodSignature, ObjectFlags, PropertySignature, 
 import { OperationDescription } from "../operation"
 
 export class ApiDescriber {
-    constructor(private baseDir: string) {
+    constructor(private baseDir: string, private skipPrefix?: string) {
 
     }
 
     describeInterface(i: InterfaceDeclaration, prefix = ""): any {
+        if (this.skipPrefix && prefix.startsWith(this.skipPrefix)) {
+            return {}
+        }
+
         let paths = {}
 
         for (const method of i.getMethods()) {

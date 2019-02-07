@@ -27,10 +27,11 @@ const optionDefinitions = [
     { name: "apiDescription", type: String },
     { name: "output", type: String },
     { name: "baseDir", type: String },
+    { name: "skip", type: String },
 ];
 
 (() => {
-    const { tsConfig, apiDescription, output, baseDir } = commandLineArgs(optionDefinitions)
+    const { tsConfig, apiDescription, output, baseDir, skip } = commandLineArgs(optionDefinitions)
 
     const description = JSON.parse(fs.readFileSync(path.join(baseDir, apiDescription), "utf8"))
 
@@ -38,7 +39,7 @@ const optionDefinitions = [
     const entryFile = project.getSourceFile(description.entry.file)
     const entryInterface = entryFile.getInterface(description.entry.interface)
 
-    const apiDescriber = new ApiDescriber(baseDir)
+    const apiDescriber = new ApiDescriber(baseDir, skip)
 
     const paths = apiDescriber.describeInterface(entryInterface)
 
