@@ -210,8 +210,21 @@ export class ApiDescriber {
     }
 
     private unionSchema(type: Type) {
+        let unionTypes = type.getUnionTypes()
+
+        // special case - conver union of literals to enu,
+        const hasNonLiteral = unionTypes.some(type => !type.isLiteral())
+
+        if (!hasNonLiteral) {
+            return {
+                type: "string",
+                enum: unionTypes.map(type => eval(type.getText()))
+            }
+        }
+
+
         return {
-            "anyOf": type.getUnionTypes().map(t => this.schema(t))
+            "anyOf": unionTypes.map(t => this.schema(t))
         }
     }
 
@@ -223,8 +236,6 @@ export class ApiDescriber {
             const argNames = type.getTypeArguments().map(type => this.getTypeReferenceName(type)).join("And")
             return `${ targetName }Of_${ argNames }`
         }
-
-        console.log(type.getText())
 
         let text = type.getText()
 

@@ -13,6 +13,7 @@ export interface Client {
     name: string
     lastModified: Date
     status: ClientStatus
+    gender: "m" | "f"
 }
 
 export interface Admin {
