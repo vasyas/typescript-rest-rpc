@@ -50,12 +50,7 @@ export class ApiDescriber {
         while (this.typeDefinitions.length) {
             const type = this.typeDefinitions[0]
 
-            if (type.isObject())
-                schemas[this.getTypeReferenceName(type)] = this.objectSchema(type)
-            else if (type.isEnum() || type.isEnumLiteral())
-                schemas[this.getTypeReferenceName(type)] = this.enumSchema(type)
-            else
-                console.log("Unsupported definition type " + type.getText())
+            schemas[this.getTypeReferenceName(type)] = this.schema(type, true)
 
             this.typeDefinitions.splice(0, 1)
         }
@@ -126,7 +121,7 @@ export class ApiDescriber {
         }))
     }
 
-    private schema(type: Type) {
+    private schema(type: Type, noReference?) {
         if (!type) return {}
 
         if (type.isArray()) {
@@ -144,7 +139,7 @@ export class ApiDescriber {
 
         if (type.isObject() || type.isEnum() || type.isEnumLiteral()) {
             // generate reference or in-place schema?
-            if ((type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
+            if (!noReference && (type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
                 this.typeDefinitions.push(type)
 
                 return {

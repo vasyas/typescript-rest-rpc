@@ -5,6 +5,7 @@ export interface Backend {
 
 export interface LoggedBackend {
     client: ClientService
+    user: UserService
 }
 
 export interface Client {
@@ -12,6 +13,15 @@ export interface Client {
     name: string
     lastModified: Date
     status: ClientStatus
+}
+
+export interface Admin {
+    id: number
+}
+
+export interface User {
+    login: string
+    account: Client | Admin
 }
 
 export enum ClientStatus {
@@ -33,4 +43,8 @@ export interface ClientService {
     getClient({ id }: { id: number }): Promise<Client>
     getAllClients(): Promise<Client[]>
     getClients(): Promise<Page<Client>>
+}
+
+export interface UserService {
+    getAllUsers(): Promise<User[]>
 }
