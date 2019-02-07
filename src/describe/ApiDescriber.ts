@@ -1,4 +1,5 @@
-import { InterfaceDeclaration, MethodSignature, PropertySignature, Type } from "ts-morph"
+import * as path from "path"
+import { InterfaceDeclaration, MethodSignature, ObjectFlags, PropertySignature, Type } from "ts-morph"
 import { OperationDescription } from "../operation"
 
 export class ApiDescriber {
@@ -34,7 +35,18 @@ export class ApiDescriber {
     }
 
     createDefinitions() {
-        if (!Object.keys(this.typeDefinitions).length) return undefined
+        if (!this.typeDefinitions.length) return {}
+
+        const schemas = this.typeDefinitions.reduce((r, type) => {
+            r[this.getTypeReferenceName(type)] = this.objectSchema(type)
+            return r
+        }, {})
+
+        return {
+            components: {
+                schemas
+            }
+        }
     }
 
 
@@ -57,7 +69,7 @@ export class ApiDescriber {
         if (promisedReturn.getText() == "void") return undefined
 
         return {
-            '200': {
+            "200": {
                 description: "Success",
                 content: {
                     "application/json": {
@@ -98,6 +110,15 @@ export class ApiDescriber {
     private schema(type: Type) {
         if (!type) return {}
 
+        // generate reference or in-place schema?
+        if (type.isObject() && (type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
+            this.typeDefinitions.push(type)
+
+            return {
+                "$ref": `#/components/schemas/${ this.getTypeReferenceName(type) }`
+            }
+        }
+
         if (type.isObject()) return this.objectSchema(type)
 
         if (type.isString()) return { type: "string" }
@@ -108,9 +129,6 @@ export class ApiDescriber {
     }
 
     private objectSchema(type: Type) {
-        // TODO if named - generate reference
-        // otherwise, generate in-place schema
-
         const properties = {
         }
 
@@ -137,5 +155,17 @@ export class ApiDescriber {
         }
     }
 
-    private typeDefinitions = {}
+    private getTypeReferenceName(type: Type): string {
+        const text = type.getText()
+        const idx = text.lastIndexOf(".")
+
+        const name = text.substring(idx + 1)
+        const absolutePath = text.match(/"(.*?)"/)[1]
+
+        const modulePath = path.relative(process.cwd(), absolutePath).replace("/", ".")
+
+        return `${modulePath}.${name}`
+    }
+
+    private typeDefinitions = []
 }

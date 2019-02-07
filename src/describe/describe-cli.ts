@@ -37,7 +37,7 @@ function loadProject() {
     const result = {
         ...description.header,
         paths,
-        definitions: apiDescriber.createDefinitions(),
+        ...apiDescriber.createDefinitions(),
     }
 
     function filterUndefined(obj) {
