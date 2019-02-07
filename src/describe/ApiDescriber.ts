@@ -3,6 +3,10 @@ import { InterfaceDeclaration, MethodSignature, ObjectFlags, PropertySignature, 
 import { OperationDescription } from "../operation"
 
 export class ApiDescriber {
+    constructor(private baseDir: string) {
+
+    }
+
     describeInterface(i: InterfaceDeclaration, prefix = ""): any {
         let paths = {}
 
@@ -162,7 +166,7 @@ export class ApiDescriber {
         const name = text.substring(idx + 1)
         const absolutePath = text.match(/"(.*?)"/)[1]
 
-        const modulePath = path.relative(process.cwd(), absolutePath).replace("/", ".")
+        const modulePath = path.relative(this.baseDir, absolutePath).replace("/", ".")
 
         return `${modulePath}.${name}`
     }

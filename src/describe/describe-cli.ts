@@ -1,15 +1,13 @@
+import * as path from "path"
 import { Project } from "ts-morph"
 import * as yaml from "write-yaml"
 
 import * as fs from "fs"
 import { ApiDescriber } from "./ApiDescriber"
 
-const descriptionFile = "./openapi-example/api-description.json"
-const outputFile = "./api.yaml"
-
-function loadProject() {
+function loadProject(tsConfigFilePath) {
     const project = new Project({
-        tsConfigFilePath: "./openapi-example/tsconfig.json"
+        tsConfigFilePath
     })
 
     const diagnostics = project.getPreEmitDiagnostics()
@@ -23,14 +21,24 @@ function loadProject() {
     return project
 }
 
-(() => {
-    const description = JSON.parse(fs.readFileSync(descriptionFile, "utf8"))
+const tsConfigFilePath = "./openapi-example/tsconfig.json"
+const descriptionFile = "./openapi-example/api-description.json"
+const outputFile = "./api.yaml"
+const baseDir = ".";
 
-    const project = loadProject()
+// const tsConfigFilePath = "./tsconfig.json"
+// const descriptionFile = "./api-description.json"
+// const outputFile = "./api.yaml"
+// const baseDir = "/Users/vasyas/projects/elpaso/shared";
+
+(() => {
+    const description = JSON.parse(fs.readFileSync(path.relative(baseDir, descriptionFile), "utf8"))
+
+    const project = loadProject(path.relative(baseDir, tsConfigFilePath))
     const entryFile = project.getSourceFile(description.entry.file)
     const entryInterface = entryFile.getInterface(description.entry.interface)
 
-    const apiDescriber = new ApiDescriber()
+    const apiDescriber = new ApiDescriber(baseDir)
 
     const paths = apiDescriber.describeInterface(entryInterface)
 
