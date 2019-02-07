@@ -49,9 +49,7 @@ export class ApiDescriber {
 
         while (this.typeDefinitions.length) {
             const type = this.typeDefinitions[0]
-
             schemas[this.getTypeReferenceName(type)] = this.schema(type, true)
-
             this.typeDefinitions.splice(0, 1)
         }
 
@@ -131,31 +129,40 @@ export class ApiDescriber {
             }
         }
 
+        if (!noReference && this.shouldBeReferenced(type)) {
+            this.typeDefinitions.push(type)
+            return {
+                "$ref": `#/components/schemas/${ this.getTypeReferenceName(type) }`
+            }
+        }
+
         if (type.isString()) return { type: "string" }
         if (type.isNumber()) return { type: "number" }
         if (type.isBoolean()) return { type: "boolean" }
 
         if (type.getText() == "any") return {}
 
-        if (type.isObject() || type.isEnum() || type.isEnumLiteral()) {
-            // generate reference or in-place schema?
-            if (!noReference && (type.getObjectFlags() & ObjectFlags.Anonymous) == 0) {
-                this.typeDefinitions.push(type)
-
-                return {
-                    "$ref": `#/components/schemas/${ this.getTypeReferenceName(type) }`
-                }
-            }
-
-            if (type.isObject())
-                return this.objectSchema(type)
-            if (type.isEnum() || type.isEnumLiteral())
-                return this.enumSchema(type)
-        }
+        if (type.isObject()) return this.objectSchema(type)
+        if (type.isEnum() || type.isEnumLiteral()) return this.enumSchema(type)
+        if (type.isUnion()) return this.unionSchema(type)
 
         console.warn(`Unsupported type ${ type.getText() }`)
         return undefined
     }
+
+    private shouldBeReferenced(type: Type) {
+        // generate reference is there's an alias symbol
+        if (type.getAliasSymbol()) return true
+
+        // or it is not an anon object or enum
+        if (type.isObject() || type.isEnum() || type.isEnumLiteral()) {
+            if ((type.getObjectFlags() & ObjectFlags.Anonymous) == 0)
+                return true
+        }
+
+        return false
+    }
+
 
     private objectSchema(type: Type) {
         if (type.getText() == "Date") {
@@ -202,6 +209,12 @@ export class ApiDescriber {
         }
     }
 
+    private unionSchema(type: Type) {
+        return {
+            "anyOf": type.getUnionTypes().map(t => this.schema(t))
+        }
+    }
+
     private getTypeReferenceName(type: Type, skipArguments?): string {
         // Generic
         if (!skipArguments && type.getTypeArguments().length > 0) {
@@ -210,6 +223,8 @@ export class ApiDescriber {
             const argNames = type.getTypeArguments().map(type => this.getTypeReferenceName(type)).join("And")
             return `${ targetName }Of_${ argNames }`
         }
+
+        console.log(type.getText())
 
         let text = type.getText()
 

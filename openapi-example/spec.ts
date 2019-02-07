@@ -21,8 +21,10 @@ export interface Admin {
 
 export interface User {
     login: string
-    account: Client | Admin
+    account: AdminOrClient
 }
+
+export type AdminOrClient = Admin | Client
 
 export enum ClientStatus {
     Active = "Active",
