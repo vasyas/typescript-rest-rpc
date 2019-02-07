@@ -1,5 +1,9 @@
 export interface Backend {
     auth: AuthService
+    logged: LoggedBackend
+}
+
+export interface LoggedBackend {
     client: ClientService
 }
 

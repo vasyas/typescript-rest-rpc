@@ -24,7 +24,7 @@ export class ApiDescriber {
             if (type.isInterface()) {
                 const declaration = type.getSymbolOrThrow().getDeclarations()[0]
 
-                const nestedPaths = this.describeInterface(declaration as InterfaceDeclaration, "/" + prop.getName())
+                const nestedPaths = this.describeInterface(declaration as InterfaceDeclaration, prefix + "/" + prop.getName())
 
                 paths = {
                     ...paths,
