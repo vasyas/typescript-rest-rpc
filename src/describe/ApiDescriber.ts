@@ -68,12 +68,13 @@ export class ApiDescriber {
     private operationResponses(method: MethodSignature) {
         const returnType = method.getReturnType()
 
-        if (!returnType || returnType.isUndefined()) return undefined
+        const noContent = { "204": { description: "Success" } }
+
+        if (!returnType || returnType.isUndefined())  return noContent
 
         // should be Promise<smth>, get smth
         const promisedReturn = returnType.getTypeArguments()[0]
-
-        if (promisedReturn.getText() == "void") return undefined
+        if (promisedReturn.getText() == "void") return noContent
 
         return {
             "200": {
