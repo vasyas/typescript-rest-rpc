@@ -11,6 +11,7 @@ export interface Client {
 
 export interface AuthService {
     login({ username, password }): Promise<{ token: string }>
+    sendResetPassword({ username }): Promise<void>
 }
 
 export interface ClientService {

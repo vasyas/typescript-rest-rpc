@@ -1,6 +1,7 @@
 import * as path from "path"
 import { Project } from "ts-morph"
 import * as yaml from "write-yaml"
+import * as commandLineArgs from "command-line-args"
 
 import * as fs from "fs"
 import { ApiDescriber } from "./ApiDescriber"
@@ -21,20 +22,19 @@ function loadProject(tsConfigFilePath) {
     return project
 }
 
-const tsConfigFilePath = "./openapi-example/tsconfig.json"
-const descriptionFile = "./openapi-example/api-description.json"
-const outputFile = "./api.yaml"
-const baseDir = ".";
-
-// const tsConfigFilePath = "tsconfig.json"
-// const descriptionFile = "api-description.json"
-// const outputFile = "api.yaml"
-// const baseDir = "/Users/vasyas/projects/elpaso/shared";
+const optionDefinitions = [
+    { name: "tsConfig", type: String },
+    { name: "apiDescription", type: String },
+    { name: "output", type: String },
+    { name: "baseDir", type: String },
+];
 
 (() => {
-    const description = JSON.parse(fs.readFileSync(path.join(baseDir, descriptionFile), "utf8"))
+    const { tsConfig, apiDescription, output, baseDir } = commandLineArgs(optionDefinitions)
 
-    const project = loadProject(path.join(baseDir, tsConfigFilePath))
+    const description = JSON.parse(fs.readFileSync(path.join(baseDir, apiDescription), "utf8"))
+
+    const project = loadProject(path.join(baseDir, tsConfig))
     const entryFile = project.getSourceFile(description.entry.file)
     const entryInterface = entryFile.getInterface(description.entry.interface)
 
@@ -61,5 +61,5 @@ const baseDir = ".";
         return obj
     }
 
-    yaml.sync(outputFile, filterUndefined(result))
+    yaml.sync(output, filterUndefined(result))
 })()
