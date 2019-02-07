@@ -6,6 +6,7 @@ export interface Backend {
 export interface Client {
     id: number
     name: string
+    lastModified: Date
 }
 
 export interface AuthService {

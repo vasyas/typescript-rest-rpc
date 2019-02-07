@@ -41,10 +41,13 @@ export class ApiDescriber {
     createDefinitions() {
         if (!this.typeDefinitions.length) return {}
 
-        const schemas = this.typeDefinitions.reduce((r, type) => {
-            r[this.getTypeReferenceName(type)] = this.objectSchema(type)
-            return r
-        }, {})
+        const schemas = {}
+
+        while (this.typeDefinitions.length) {
+            const type = this.typeDefinitions[0]
+            schemas[this.getTypeReferenceName(type)] = this.objectSchema(type)
+            this.typeDefinitions.splice(0, 1)
+        }
 
         return {
             components: {
@@ -123,6 +126,8 @@ export class ApiDescriber {
 
         if (type.isString()) return { type: "string" }
         if (type.isNumber()) return { type: "number" }
+        if (type.isBoolean()) return { type: "boolean" }
+        if (type.getText() == "any") return {}
 
         if (type.isObject()) {
             // generate reference or in-place schema?
@@ -141,6 +146,14 @@ export class ApiDescriber {
     }
 
     private objectSchema(type: Type) {
+        if (type.getText() == "Date") {
+            return {
+                type: "string",
+                format: "date-time",
+            }
+        }
+
+        // key-value object
         const properties = {
         }
 
@@ -168,16 +181,18 @@ export class ApiDescriber {
     }
 
     private getTypeReferenceName(type: Type): string {
-        console.log("Finding reference for " + type.getText())
-
         const text = type.getText()
+
         const idx = text.lastIndexOf(".")
 
         const name = text.substring(idx + 1)
-        const absolutePath = text.match(/"(.*?)"/)[1]
+        const absolutePathMatch = text.match(/"(.*?)"/)
 
-        const modulePath = path.relative(this.baseDir, absolutePath).replace("/", ".")
+        if (!absolutePathMatch) {
+            return name
+        }
 
+        const modulePath = path.relative(this.baseDir, absolutePathMatch[1]).replace("/", ".")
         return `${modulePath}.${name}`
     }
 
