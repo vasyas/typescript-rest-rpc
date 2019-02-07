@@ -49,7 +49,7 @@ export class ApiDescriber {
 
         while (this.typeDefinitions.length) {
             const type = this.typeDefinitions[0]
-            schemas[this.getTypeReferenceName(type)] = this.schema(type, true)
+            schemas[this.getTypeReferenceName(type)] = this.schema(type, new TypeMapping(), true)
             this.typeDefinitions.splice(0, 1)
         }
 
@@ -119,13 +119,13 @@ export class ApiDescriber {
         }))
     }
 
-    private schema(type: Type, noReference?) {
+    private schema(type: Type, parentTypeMapping = new TypeMapping(), noReference?) {
         if (!type) return {}
 
         if (type.isArray()) {
             return {
                 type: "array",
-                items: this.schema(type.getArrayType())
+                items: this.schema(parentTypeMapping.map(type.getArrayType()))
             }
         }
 
@@ -142,7 +142,7 @@ export class ApiDescriber {
 
         if (type.getText() == "any") return {}
 
-        if (type.isObject()) return this.objectSchema(type)
+        if (type.isObject()) return this.objectSchema(type, parentTypeMapping)
         if (type.isEnum() || type.isEnumLiteral()) return this.enumSchema(type)
         if (type.isUnion()) return this.unionSchema(type)
 
@@ -164,13 +164,19 @@ export class ApiDescriber {
     }
 
 
-    private objectSchema(type: Type) {
+    private objectSchema(type: Type, parentTypeMapping = new TypeMapping()) {
         if (type.getText() == "Date") {
             return {
                 type: "string",
                 format: "date-time",
             }
         }
+
+        const typeMapping = new TypeMapping(
+            type.getTargetType() ? type.getTargetType().getTypeArguments() : [],
+            type.getTypeArguments(),
+            parentTypeMapping,
+        )
 
         // key-value object
         const properties = {
@@ -181,14 +187,17 @@ export class ApiDescriber {
             if (prop.getValueDeclaration()) {
                 const propertySignature = prop.getValueDeclaration() as PropertySignature
 
-                if (propertySignature.getType()) {
+                const propertyType = propertySignature.getType()
+
+                if (propertyType) {
                     properties[prop.getName()] = {
-                        ...this.schema(propertySignature.getType())
+                        ...this.schema(typeMapping.map(propertyType), typeMapping)
                     }
                 } else {
                     console.warn(`Unable to get type for property ${ prop.getName() }`)
                 }
             } else {
+                // console.warn(`Unable to read type for property ${ prop.getName() }`)
                 properties[prop.getName()] = {}
             }
         }
@@ -261,4 +270,18 @@ export class ApiDescriber {
     }
 
     private typeDefinitions = []
+}
+
+class TypeMapping {
+    constructor(from: Type[] = [], to: Type[] = [], private parentTypeMapping = null) {
+        for (let i = 0; i < from.length; i ++) {
+            this.mapping[from[i].getText()] = to[i]
+        }
+    }
+
+    map(from: Type): Type {
+        return this.mapping[from.getText()] || (this.parentTypeMapping && this.parentTypeMapping.map(from)) || from
+    }
+
+    private mapping: { [name: string]: Type } = {}
 }

@@ -14,6 +14,7 @@ export interface Client {
     lastModified: Date
     status: ClientStatus
     gender: "m" | "f"
+    icons: string[]
 }
 
 export interface Admin {
@@ -34,7 +35,7 @@ export enum ClientStatus {
 
 export interface Page<T> {
     total: number
-    rows: Client[]
+    rows: T[]
 }
 
 export interface AuthService {
