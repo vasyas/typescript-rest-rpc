@@ -139,7 +139,7 @@ export class ApiDescriber {
         if (type.getText() == "any") return {}
 
         if (type.isObject()) return this.objectSchema(type, parentTypeMapping)
-        if (type.isEnum() || type.isEnumLiteral()) return this.enumSchema(type)
+        if (type.isEnum() || type.isEnumLiteral()) return this.enumSchema(type) // isEnumLiteral for enums with a single value
         if (type.isUnion()) return this.unionSchema(type)
 
         console.warn(`Unsupported type ${ type.getText() }`)
@@ -206,6 +206,14 @@ export class ApiDescriber {
 
     private enumSchema(type: Type) {
         const declaration = type.getSymbol().getValueDeclaration() as EnumDeclaration
+
+        if (!declaration.getMembers) {
+            return {
+                type: "string",
+                enum: [type.getSymbolOrThrow().getEscapedName()]
+            }
+        }
+
         const members = declaration.getMembers()
 
         return {
@@ -217,13 +225,19 @@ export class ApiDescriber {
     private unionSchema(type: Type) {
         let unionTypes = type.getUnionTypes()
 
-        // special case - conver union of literals to enu,
-        const hasNonLiteral = unionTypes.some(type => !type.isLiteral())
+        // special case - convert union of literals to enum,
+        const literalsOnly = !unionTypes.some(type => !type.isLiteral())
 
-        if (!hasNonLiteral) {
+        if (literalsOnly) {
             return {
                 type: "string",
-                enum: unionTypes.map(type => eval(type.getText()))
+                enum: Array.from(new Set(unionTypes.map(type => {
+                    if (type.isEnumLiteral()) {
+                        return type.getSymbolOrThrow().getEscapedName()
+                    }
+
+                    return eval(type.getText())
+                })))
             }
         }
 
