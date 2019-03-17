@@ -2,6 +2,7 @@ import * as path from "path"
 import { Project } from "ts-morph"
 import * as yaml from "write-yaml"
 import * as commandLineArgs from "command-line-args"
+import * as commandLineUsage from "command-line-usage"
 
 import * as fs from "fs"
 import { ApiDescriber } from "./ApiDescriber"
@@ -22,16 +23,33 @@ function loadProject(tsConfigFilePath) {
     return project
 }
 
-const optionDefinitions = [
-    { name: "tsConfig", type: String },
-    { name: "apiDescription", type: String },
-    { name: "output", type: String },
-    { name: "baseDir", type: String },
-    { name: "skip", type: String },
+const optionList = [
+    { name: "tsConfig", type: String, description: "Path to tsconfig.json", typeLabel: "{underline file}" },
+    { name: "apiDescription", type: String, description: "Path to api-description.json", typeLabel: "{underline file}" },
+    { name: "output", type: String, description: "Output file", typeLabel: "{underline file}" },
+    { name: "baseDir", type: String, description: "Base dir to look for files.\nDefault to current directory.", typeLabel: "{underline directory}" },
+    { name: "skip", type: String, description: "Skip interfaces starting with this prefix.\nDefault to skip nothing", typeLabel: "{underline string}" },
+]
+
+const usageSections = [
+    {
+        header: './node_modules/typescript-rest-rpc/lib/describe/describe-cli.js',
+        content: 'Generate OpenAPI API description based on TypeScript interfaces.'
+    },
+    {
+        header: 'Options',
+        optionList,
+    }
 ];
 
 (() => {
-    const { tsConfig, apiDescription, output, baseDir, skip } = commandLineArgs(optionDefinitions)
+    const { tsConfig, apiDescription, output, baseDir, skip } = commandLineArgs(optionList)
+
+    if (!tsConfig || !apiDescription || !output) {
+        const usage = commandLineUsage(usageSections)
+        console.log(usage)
+        return
+    }
 
     const description = JSON.parse(fs.readFileSync(path.join(baseDir, apiDescription), "utf8"))
 
