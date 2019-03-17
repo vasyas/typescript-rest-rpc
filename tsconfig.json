@@ -12,7 +12,8 @@
   },
   "include": [
     "shims.d.ts",
-    "src/*.ts"
+    "src/*.ts",
+    "src/describe/*.ts"
   ],
   "exclude": [
     "node_modules"
