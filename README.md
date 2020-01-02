@@ -1,3 +1,5 @@
+This package is deprecated in favor of https://github.com/vasyas/push-rpc
+
 # REST RPC for TypeScript
 
 This library allows you to define your RESTful API in a TypeScript interface. 
